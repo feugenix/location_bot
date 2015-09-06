@@ -2,13 +2,14 @@
     "name": "EnLocationBot",
     "private": true,
     "engines": {
-        "node": ">=0.13"
+        "node": ">=4.0.0"
     },
     "main": "app.js",
     "dependencies": {
-        "express": "~4.13"
+        "express": "~4.13",
+        "body-parser": "~1.13.3"
     },
     "scripts": {
-        "start": "node app.js"
+        "start": "node --harmony --harmony_arrow_functions app.js"
     }
 }
