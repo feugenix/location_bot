@@ -1,10 +1,12 @@
-"use strict";
-var https = require('https'),
-    url = require('url'),
+'use strict';
+
+let https = require('https'),
     querystring = require('querystring'),
     express = require('express'),
     bodyParser = require('body-parser'),
     app = express();
+
+let toRadians = (angle) => angle * Math.PI / 180;
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const API_HOST = 'api.telegram.org';
@@ -20,9 +22,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 https
-    .get(API_URL + '/setWebhook?url=' + APP_URL + HOOK_URL)
+    .get(`${API_URL}/setWebhook?url=${APP_URL}${HOOK_URL}`)
     .on('error', () => console.log('Cant set webhook'))
-    .on('response', function (response) {
+    .on('response', (response) => {
         if (response.statusCode !== 200)
             return console.log('Telegram sad no');
 
@@ -32,7 +34,7 @@ https
     });
 
 app.post(HOOK_URL, function(req, res) {
-    var message = req.body.message,
+    let message = req.body.message,
         playerLocation = message.location,
         textReply;
 
@@ -43,16 +45,16 @@ app.post(HOOK_URL, function(req, res) {
             switch (message.text.toLowerCase()) {
                 case '/help':
                     textReply = 'Абсолютный ноль (дальше 150 метров) -> Ооочень холодно (от 150 метров до 100) -> Ниже нуля (от 100 до 50 метров) -> Холодно (от 50 метров до 30) -> Тепло (от 30 метров до 15) -> Жарко (от 15 метров до 5) -> АдЪ';
-                break;
+                    break;
 
                 case '/fail':
                     textReply = 'Лузер! Иди на перекрёсток Горького и Пушкина';
-                break;
+                    break;
 
                 case 'бегемотобар':
                 case 'бегемот':
                     textReply = 'Правильно!';
-                break;
+                    break;
             }
         }
 
@@ -65,7 +67,7 @@ app.post(HOOK_URL, function(req, res) {
         return;
     }
 
-    var resJSON = {
+    let resJSON = {
         chat_id: message.chat.id,
         text: getMessageByLocation(playerLocation)
     };
@@ -75,20 +77,26 @@ app.post(HOOK_URL, function(req, res) {
     res.status(200).end();
 });
 
-function getMessageByLocation(playerLocation) {
-    var plLatitude = toRadians(parseFloat(playerLocation.latitude)),
+function getDistanceFromCode(playerLocation) {
+    let plLatitude = toRadians(parseFloat(playerLocation.latitude)),
         plLongitude = toRadians(parseFloat(playerLocation.longitude)),
         playerDistance = Math.acos(
             Math.sin(CODE_LOCATION[0]) * Math.sin(plLatitude)
             + Math.cos(CODE_LOCATION[0]) * Math.cos(plLatitude) * Math.cos(CODE_LOCATION[1] - plLongitude)
             ) * 6369000;
 
+    return playerDistance;
+}
+
+function getMessageByLocation(playerLocation) {
+    let playerDistance = getDistanceFromCode(playerLocation);
+
     if (playerDistance <= 5) {
         return 'АдЪ, введи название заведения';
     } else if (playerDistance <= 15) {
         return 'Жарко';
     } else if (playerDistance <= 30) {
-        return 'Тепло'
+        return 'Тепло';
     } else if (playerDistance <= 50) {
         return 'Холодно';
     } else if (playerDistance <= 100) {
@@ -100,14 +108,10 @@ function getMessageByLocation(playerLocation) {
     }
 }
 
-function toRadians(angle) {
-    return angle * Math.PI / 180;
-}
-
 function sendMessage(message) {
-    var httpsReq = https.request({
+    let httpsReq = https.request({
         hostname: API_HOST,
-        path: API_BOT_TOKEN + '/sendMessage',
+        path: `${API_BOT_TOKEN}/sendMessage`,
         port: 443,
         method: 'POST',
         headers: {
@@ -120,4 +124,4 @@ function sendMessage(message) {
 
 function startServer() {
     app.listen(process.env.PORT || 55555, () => console.log('Started'));
-};
+}
