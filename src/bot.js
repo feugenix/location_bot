@@ -4,18 +4,38 @@ let https = require('https'),
     EventEmitter = require('events').EventEmitter,
     debug = require('debug')('botApi');
 
+/**
+ * Creates a instance of bot with es7 syntax
+ * @class TelegramBot
+ */
 export default class TelegramBot extends EventEmitter {
-    constructor({ token, apiHost = 'api.telegram.org', hookUrl }) {
+    /**
+     * @constructor
+     *
+     * @param {String} token — bot token
+     * @param {String} [apiHost='api.telegram.org']
+     */
+    constructor({ token, apiHost = 'api.telegram.org' }) {
         super();
 
         this.token = token;
         this.apiHost = apiHost;
-        this.hookUrl = hookUrl;
 
         this.botToken = `/bot${this.token}`;
         this.apiURL = `https://${this.apiHost}${this.botToken}`;
     }
 
+    /**
+     * Sets web hook and starts server for handing requests to hook
+     *
+     * @param {String} hookUrl
+     * @param {Object} [serverOptions]
+     * @param {Number} [serverOptions.port=55555]
+     * @param {String} [serverOptions.key] — path to file with key
+     * @param {String} [serverOptions.cert] — path to file with cert
+     *
+     * @returns {TelegramBot}
+     */
     setWebHook({ hookUrl, serverOptions }) {
         let executor = (resolve, reject) => {
                 https
@@ -37,6 +57,11 @@ export default class TelegramBot extends EventEmitter {
         return promise;
     }
 
+    /**
+     * Sends message from bot
+     *
+     * @param {Object} message
+     */
     sendMessage(message) {
         let httpsReq = https.request({
                 hostname: this.apiHost,
@@ -52,6 +77,10 @@ export default class TelegramBot extends EventEmitter {
     }
 };
 
+/**
+ * Internal web server to handle hook requests
+ * @class InternalHookServer
+ */
 class InternalHookServer extends EventEmitter {
     start(options) {
         if (this._webServer)
