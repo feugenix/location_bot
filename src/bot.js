@@ -1,4 +1,5 @@
 let https = require('https'),
+    http = require('http'),
     querystring = require('querystring'),
     EventEmitter = require('events').EventEmitter,
     debug = require('debug')('botApi');
@@ -24,7 +25,7 @@ export default class TelegramBot extends EventEmitter {
                         if (response.statusCode !== 200)
                             return reject('WebHook was rejected by Telegram.');
 
-                        (new InternalHoorServer)
+                        (new InternalHookServer)
                             .start(serverOptions)
                             .on('data', data => this.emit('message', data))
 
@@ -51,10 +52,12 @@ export default class TelegramBot extends EventEmitter {
     }
 };
 
-class InternalHoorServer extends EventEmitter {
+class InternalHookServer extends EventEmitter {
     start(options) {
         if (this._webServer)
             return this;
+
+        options = options || {};
 
         options.port = options.port || 55555;
 

@@ -21,9 +21,15 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 bot
-    .setWebHook(`https://safe-inlet-1186.herokuapp.com/hook/${token}/`)
-    .catch(reason => debug(`Failed to set hook. Reason: ${reason}`))
-    .on('message', data => debug(data));
+    .setWebHook({
+        hookUrl: `https://safe-inlet-1186.herokuapp.com/hook/${token}/`,
+        serverOptions: {
+            port: 55555
+        }
+    })
+    .catch(reason => debug(`Failed to set hook. Reason: ${reason}`));
+
+bot.on('message', data => debug(data));
 
 /*
 app.post(HOOK_URL, function(req, res) {
