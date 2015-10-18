@@ -29,5 +29,13 @@
         "es6": true,
         "node": true
     },
+    "ecmaFeatures": {
+        "modules": true,
+        "arrowFunctions": true,
+        "blockBindings": true,
+        "classes": true,
+        "defaultParams": true,
+        "templateStrings": true
+    },
     "extends": "eslint:recommended"
 }
