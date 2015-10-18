@@ -11,8 +11,8 @@ export default class LocationBot extends TelegramBot {
     }
 }
 
-let getMessageByLocation = playerLocation => {
-    let playerDistance = getDistanceFromCode(playerLocation, CODE_LOCATION);
+let getMessageByLocation = (playerLocation, codeLocaton) => {
+    let playerDistance = getDistanceFromCode(playerLocation, codeLocaton);
 
     if (playerDistance <= 5) {
         return 'АдЪ, введи название заведения';

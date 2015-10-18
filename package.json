@@ -17,6 +17,6 @@
     "scripts": {
         "start": "node lib/app.js",
         "babel": "./node_modules/.bin/babel src -d lib -D",
-        "lint": "./node_modules/.bin/eslint"
+        "lint": "./node_modules/.bin/eslint src"
     }
 }
