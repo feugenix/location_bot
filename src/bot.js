@@ -1,8 +1,10 @@
-let https = require('https'),
-    http = require('http'),
-    querystring = require('querystring'),
-    EventEmitter = require('events').EventEmitter,
-    debug = require('debug')('botApi');
+import * as https from 'https';
+import * as querystring from 'querystring';
+import {EventEmitter} from 'events';
+import DebugFactory from 'debug';
+import InternalHookServer from './internalHookServer';
+
+let debug = DebugFactory('botApi');
 
 /**
  * Creates a instance of bot with es7 syntax
@@ -74,68 +76,5 @@ export default class TelegramBot extends EventEmitter {
             });
 
         httpsReq.end(querystring.stringify(message));
-    }
-};
-
-/**
- * Internal web server to handle hook requests
- * @class InternalHookServer
- */
-class InternalHookServer extends EventEmitter {
-    start(options) {
-        if (this._webServer)
-            return this;
-
-        options = options || {};
-
-        options.port = options.port || 55555;
-
-        if (options.key && options.cert) {
-            let httpsOptions = {
-                key: fs.readFileSync(options.key),
-                cert: fs.readFileSync(options.cert)
-            };
-
-            this._webServer = https.createServer(httpsOptions, this::this._handleRequest);
-            debug('Created HTTPS Hook Server');
-        } else {
-            this._webServer = http.createServer(this::this._handleRequest);
-            debug('Created HTTP Hook Server');
-        }
-
-        this._webServer.listen(
-            options.port,
-            options.host,
-            () => debug(`started server on port ${options.port}`)
-        );
-
-        return this;
-    }
-
-    _handleRequest(req, res) {
-        debug(`WebHook request method: ${req.method}`);
-        debug(`WebHook request URL: ${req.url}`);
-
-        if (req.method !== 'POST') {
-            debug('WebHook request isn\'t a POST');
-            res.statusCode = 418;
-            return res.end();
-        }
-
-        let fullBody = '';
-
-        req
-            .on('data', chunk => fullBody += chunk.toString())
-            .on('end', () => {
-                try {
-                    let data = JSON.parse(fullBody);
-                    this.emit('data', data);
-                } catch (error) {
-                    debug(error);
-                    this.emit('error', error);
-                }
-
-                res.end('OK');
-            });
     }
 };
