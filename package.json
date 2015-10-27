@@ -14,8 +14,7 @@
     "devDependencies": {
         "eslint": "*",
         "mocha": "~2.3.3",
-        "sinon": "~1.17.2",
-        "proxyquire": "~1.7.3"
+        "sinon": "~1.17.2"
     },
     "scripts": {
         "start-debug": "DEBUG=botApi,botApi-test node lib/app.js",
