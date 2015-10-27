@@ -1,5 +1,6 @@
 import * as https from 'https';
 import * as http from 'http';
+import * as fs from 'fs';
 import {EventEmitter} from 'events';
 import DebugFactory from 'debug';
 
@@ -31,16 +32,9 @@ export default class InternalHookServer extends EventEmitter {
         options.port = options.port || 55555;
 
         if (options.key && options.cert) {
-            let httpsOptions = {
-                key: fs.readFileSync(options.key),
-                cert: fs.readFileSync(options.cert)
-            };
-
-            this._webServer = https.createServer(httpsOptions, this::this._handleRequest);
-            debug('Created HTTPS Hook Server');
+            this._webServer = this._createHttpsServer(options);
         } else {
-            this._webServer = http.createServer(this::this._handleRequest);
-            debug('Created HTTP Hook Server');
+            this._webServer = this._createHttpServer();
         }
 
         this._webServer.listen(
@@ -50,6 +44,26 @@ export default class InternalHookServer extends EventEmitter {
         );
 
         return this;
+    }
+
+    _createHttpsServer(options) {
+        let httpsOptions = {
+                key: fs.readFileSync(options.key),
+                cert: fs.readFileSync(options.cert)
+            },
+            webServer;
+
+        webServer = https.createServer(httpsOptions, this::this._handleRequest);
+        debug('Created HTTPS Hook Server');
+
+        return webServer;
+    }
+
+    _createHttpServer() {
+        let webServer = http.createServer(this::this._handleRequest);
+        debug('Created HTTP Hook Server');
+
+        return webServer;
     }
 
     /**

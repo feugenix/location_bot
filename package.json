@@ -11,13 +11,18 @@
         "babel": "~5.8.23",
         "debug": "^2.2.0"
     },
-    "devDepedencies": {
-        "eslint": "*"
+    "devDependencies": {
+        "eslint": "*",
+        "mocha": "~2.3.3",
+        "sinon": "~1.17.2",
+        "proxyquire": "~1.7.3"
     },
     "scripts": {
         "start-debug": "DEBUG=botApi,botApi-test node lib/app.js",
         "start": "node lib/app.js",
-        "babel": "./node_modules/.bin/babel src -d lib -D",
+        "babel-src": "./node_modules/.bin/babel src -d lib -D",
+        "babel-test": "./node_modules/.bin/babel test -d test-lib -D",
+        "test": "npm run-script babel-src && npm run-script babel-test && mocha $(find test-lib -name '*.js')",
         "lint": "./node_modules/.bin/eslint src"
     }
 }
