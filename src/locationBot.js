@@ -9,7 +9,7 @@ export default class LocationBot extends TelegramBot {
             .split(';')
             .map(coord => toRadians(parseFloat(coord)));
     }
-}
+};
 
 let getMessageByLocation = (playerLocation, codeLocaton) => {
     let playerDistance = getDistanceFromCode(playerLocation, codeLocaton);

@@ -49,7 +49,7 @@ export default class TelegramBot extends EventEmitter {
 
                         (new InternalHookServer)
                             .start(serverOptions)
-                            .on('data', data => this.emit('message', data))
+                            .on('data', data => this.emit('message', data));
 
                         resolve();
                     });
