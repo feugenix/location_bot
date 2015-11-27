@@ -1,6 +1,6 @@
 import * as https from 'https';
 import * as querystring from 'querystring';
-import {EventEmitter} from 'events';
+import { EventEmitter } from 'events';
 import DebugFactory from 'debug';
 import InternalHookServer from './internalHookServer';
 

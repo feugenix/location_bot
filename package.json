@@ -8,7 +8,7 @@
     "dependencies": {
         "express": "~4.13",
         "body-parser": "~1.13.3",
-        "babel": "~6.0.20",
+        "babel": "~6.0.15",
         "babel-cli": "~6.0.15",
         "babel-preset-stage-0": "~6.0.15",
         "babel-preset-es2015": "~6.0.15",
@@ -17,7 +17,8 @@
     "devDependencies": {
         "eslint": "*",
         "mocha": "~2.3.3",
-        "sinon": "~1.17.2"
+        "sinon": "~1.17.2",
+        "mockery": "~1.4.0"
     },
     "scripts": {
         "start-debug": "DEBUG=botApi,botApi-test node lib/app.js",
